@@ -12,4 +12,6 @@ Project ini menggunakan Laravel
 Tahap 1 Konfigurasi--
 1. Lakukan konfigurasi pada database, (DB_DATABASE). kemudian buat database mysql Anda.
 2. php artisan make:model Post -m untuk membuat model dan migrasi pada laravel
-3. membuat field tabel & php artisan migrate
+3. membuat field tabel
+
+Membuat API Resources
