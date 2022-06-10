@@ -74,5 +74,56 @@ class PostController extends Controller
         return new PostResource(true, 'Data Post Ditemukan!', $post);
     }
 
+    /**
+     * update
+     * 
+     * @param mixed $request
+     * @param mixed $id
+     * @return void
+     */
+    public function update(Request $request, Post $post)
+    {
+        // define validation rules
+        $validator = Validator::make($request->all(), [
+            'title'     => 'required',
+            'content'   => 'required',
+        ]);
+
+        //check if validation fails
+        if($validator->fails()) {
+            return response()->json(validator->errors(), 442);
+        }
+
+        //check if image is not empty
+        if($request->hasFile('image')){
+
+            //upload image
+            $image = $request->file('image');
+            $image->storeAs('public/posts', $image->hashName());
+
+            //delete old image
+            Storage::delete('public/posts/'.$post->image);
+
+            //update post with new image
+            $post->update([
+                'image'     => $image->hashName(),
+                'title'     => $request->title,
+                'content'   => $request->content,
+            ]);
+
+        } else {
+            // update post without image
+            $post->update([
+                'title'     => $request->title,
+                'content'   => $request->content,
+            ]);
+        }
+
+    //return response
+    return new PostResource(true, 'Data Post Berhasil Dirubah!', $post);
+    }
+
     
+
+
 }
