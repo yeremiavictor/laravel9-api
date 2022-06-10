@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
@@ -35,7 +36,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //define validation rules
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'image'   => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'title'   => 'required',
             'content' => 'required',
@@ -43,7 +44,7 @@ class PostController extends Controller
 
         //check if validation fails
         if($validator->fails()){
-            return response()->json($validator->errors(),442);
+            return response()->json($validator->errors(), 442);
         }
 
         //upload image
@@ -123,7 +124,23 @@ class PostController extends Controller
     return new PostResource(true, 'Data Post Berhasil Dirubah!', $post);
     }
 
-    
+        /**
+     * destroy
+     *
+     * @param  mixed $post
+     * @return void
+     */
+    public function destroy(Post $post)
+    {
+        //delete image
+        Storage::delete('public/posts/'.$post->image);
+
+        //delete post
+        $post->delete();
+
+        //return response
+        return new PostResource(true, 'Data Post Berhasil Dihapus!', null);
+    }
 
 
 }
